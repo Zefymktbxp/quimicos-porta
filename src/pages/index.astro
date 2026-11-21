@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import '../styles/inicio.css';
+import Layout from '../layouts/Layout.astro';
+import IconoLinea from '../components/IconoLinea.astro';
+import IconoWhatsApp from '../components/IconoWhatsApp.astro';
+import { site } from '../config/site.js';
+import { catalogo, recorteDe } from '../lib/catalogo.js';
+import { categorias } from '../data/categorias.js';
+import { enlaceWhatsApp, mensajeProducto } from '../lib/whatsapp.js';
+
+const conteo = (id) => catalogo.filter((p) => p.categoria === id).length;
+const destino = (c) => (c.consulta ? enlaceWhatsApp(c.consulta) : `/catalogo/?categoria=${c.id}`);
+const colores = { quimicos: 'azul', alimentarios: 'turquesa', naturales: 'verde', limpieza: 'turquesa', cosmetica: 'verde', laboratorio: 'azul' };
+
+// Burbujas de la portada: producto, color del disco, tamaño y posición (en % del conjunto).
+const burbujas = [
+  { slug: 'aceite-de-oliva-extra-virgen', color: 'azul', t: 46, x: 27, y: 24 },
+  { slug: 'colageno-hidrolizado', color: 'turquesa', t: 36, x: 0, y: 40 },
+  { slug: 'cartilago-de-tiburon', color: 'verde', t: 34, x: 64, y: 4 },
+  { slug: 'bicarbonato-de-sodio', color: 'blanco', t: 30, x: 66, y: 52 },
+  { slug: 'acido-fosforico-85', color: 'claro', t: 26, x: 8, y: 2 },
+];
+const sugerencias = ['ácido cítrico', 'colágeno', 'glicerina', 'harina de maca', 'stevia'];
+// Fotos de fondo de las categorías: Pexels (licencia libre, sin atribución obligatoria). Reemplazar por fotos propias cuando existan.
+const fondos = import.meta.glob('../assets/categorias/*.webp', { eager: true });
+const ejemplo = catalogo.find((p) => p.slug === 'colageno-hidrolizado');
+---
+<Layout actual="inicio">
+  <div class="pc">
+    <!-- Portada: burbujas de producto y dos acciones claras -->
+    <section class="pc-hero">
+      <div class="contenedor pc-hero-grid">
+        <div class="pc-texto">
+          <h1>Insumos químicos, alimentarios y productos naturales</h1>
+          <p class="pc-lead">Atendemos a negocios y hogares en Huancayo. Elige tu producto y escríbenos: te respondemos por WhatsApp.</p>
+          <div class="pc-acciones">
+            <a class="boton boton-blanco" href="/catalogo/">Explorar catálogo</a>
+            <a class="boton pc-wa" href={enlaceWhatsApp('Hola, quisiera hacer una consulta')} target="_blank" rel="noopener"><IconoWhatsApp /> Escribir por WhatsApp</a>
+          </div>
+          <form class="pc-buscar" action="/catalogo/" method="get" role="search">
+            <label class="visually-hidden" for="q-hero">Buscar producto por nombre</label>
+            <div class="pc-buscar-campo">
+              <input id="q-hero" type="search" name="q" placeholder={`Busca entre ${catalogo.length} productos`} autocomplete="off" />
+              <button type="submit" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+            </div>
+            <p class="pc-sugerencias"><span>Prueba con</span>{sugerencias.map((t) => <a href={`/catalogo/?q=${encodeURIComponent(t)}`}>{t}</a>)}</p>
+          </form>
+          <p class="pc-horario">Atención {site.horario.toLowerCase()}</p>
+        </div>
+
+        <div class="pc-burbujas">
+          {burbujas.map((b, i) => (
+            <a class={`pc-burbuja pc-${b.color}`} style={`--t:${b.t}%; --x:${b.x}%; --y:${b.y}%; --d:${i * -1.1}s`} href={`/producto/${b.slug}/`} aria-label={catalogo.find((p) => p.slug === b.slug)?.nombre}>
+              <Image src={recorteDe(b.slug)} alt="" width={320} loading="eager" />
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Líneas como globos de conversación -->
+    <section class="pc-lineas">
+      <div class="contenedor">
+        <h2>Explora por categoría</h2>
+        <ul>
+          {categorias.map((c) => (
+            <li>
+              <a class={`pc-globo pc-g-${colores[c.id]} pc-cat-${c.id}`} href={destino(c)} target={c.consulta ? '_blank' : undefined} rel={c.consulta ? 'noopener' : undefined}>
+                <Image class="pc-globo-fondo" src={fondos[`../assets/categorias/${c.id}.webp`].default} alt="" width={700} loading="lazy" />
+                <span class="pc-icono"><IconoLinea id={c.id} /></span>
+                <div>
+                  <h3>{c.nombre}</h3>
+                  <p>{c.descripcion}</p>
+                  <small>{c.consulta ? 'Consultar por WhatsApp' : `${conteo(c.id)} productos`}</small>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Así de fácil: una secuencia real de pasos -->
+    <section class="pc-pasos">
+      <div class="contenedor pc-pasos-grid">
+        <div>
+          <h2>Así de fácil</h2>
+          <ol>
+            <li><strong>Busca tu producto</strong><span>Mira el catálogo o usa el buscador.</span></li>
+            <li><strong>Toca «Consultar por WhatsApp»</strong><span>Se abre el chat con tu mensaje ya escrito.</span></li>
+            <li><strong>Coordina tu pedido</strong><span>Por mayor, por menor, con delivery o envío a nivel nacional.</span></li>
+          </ol>
+        </div>
+        <div class="pc-chat" aria-hidden="true">
+          <p class="pc-burbuja-msg">{mensajeProducto(ejemplo)}</p>
+          <span class="pc-hora"><IconoWhatsApp /> Mensaje de ejemplo</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="pc-visita">
+      <div class="contenedor pc-visita-fila">
+        <div>
+          <h2>Ven a vernos en Huancayo</h2>
+          <p>{site.direccion}</p>
+        </div>
+        <a class="boton boton-turquesa boton-principal" href={site.mapaUrl} target="_blank" rel="noopener">Cómo llegar</a>
+      </div>
+    </section>
+  </div>
+</Layout>

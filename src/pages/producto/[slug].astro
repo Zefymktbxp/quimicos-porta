@@ -1,0 +1,121 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import IconoWhatsApp from '../../components/IconoWhatsApp.astro';
+import { catalogo, TEXTO_SIN_PRESENTACION } from '../../lib/catalogo.js';
+import { mensajeProducto, enlaceWhatsApp } from '../../lib/whatsapp.js';
+import { site } from '../../config/site.js';
+import { categorias } from '../../data/categorias.js';
+import TarjetaProducto from '../../components/TarjetaProducto.astro';
+
+export function getStaticPaths() {
+  return catalogo.map((producto) => ({ params: { slug: producto.slug }, props: { producto } }));
+}
+
+const { producto } = Astro.props;
+const mensaje = mensajeProducto(producto);
+const enlace = enlaceWhatsApp(mensaje);
+const descripcion =
+  producto.descripcion ??
+  `${producto.nombre}. Venta al por mayor y al por menor. Consulta el precio y la disponibilidad por WhatsApp.`;
+const modo = producto.modoConsumo;
+const tieneModo = modo && (modo.porcion || modo.preparacion || modo.frecuencia);
+
+// Línea del producto y otros productos de la misma línea (los que tienen foto salen primero).
+const linea = categorias.find((c) => c.id === producto.categoria);
+const relacionados = catalogo.filter((p) => p.categoria === producto.categoria && p.slug !== producto.slug).slice(0, 4);
+---
+<Layout titulo={producto.nombre} descripcion={descripcion} actual="catalogo" flotante={false}>
+  <div class="pagina">
+    <div class="contenedor">
+      <p class="migas"><a href="/catalogo/">← Volver al catálogo</a></p>
+
+      <article class="ficha">
+        <!-- Columna lateral: la foto y los datos rápidos se quedan a la vista mientras se lee la ficha -->
+        <div class="ficha-lado">
+          {producto.imagen && (
+            <div class="ficha-foto">
+              <Image src={producto.imagen} alt={producto.nombre} width={800} height={800} loading="eager" />
+            </div>
+          )}
+          <dl class="ficha-datos">
+            {linea && (<div><dt>Línea</dt><dd><a href={`/catalogo/?categoria=${linea.id}`}>{linea.nombre}</a></dd></div>)}
+            <div><dt>Venta</dt><dd>Por mayor y por menor</dd></div>
+            <div><dt>Entrega</dt><dd>Delivery y envíos a nivel nacional</dd></div>
+            {site.horario && (<div><dt>Atención</dt><dd>{site.horario}</dd></div>)}
+          </dl>
+        </div>
+
+        <div>
+          <h1>{producto.nombre}</h1>
+          <p>{descripcion}</p>
+
+          <p class="dato">
+            <small>{producto.presentaciones.length > 1 ? 'Presentaciones:' : 'Presentación:'}</small>
+            {producto.presentaciones.length > 0 ? producto.presentaciones.join(', ').replace(/, ([^,]*)$/, ' y $1') : TEXTO_SIN_PRESENTACION}
+          </p>
+
+          <div class="consulta">
+            <a class="boton boton-whatsapp boton-grande" href={enlace} target="_blank" rel="noopener" data-mensaje={mensaje}>
+              <IconoWhatsApp /> Consultar por WhatsApp
+            </a>
+            <p class="consulta-mensaje">Se abrirá WhatsApp con este mensaje: «{mensaje}».</p>
+          </div>
+          <p class="nota">{site.ventas}. Precio y disponibilidad por consulta.</p>
+
+          {producto.variantes?.length > 0 && (
+            <section class="seccion-ficha">
+              <h2>Procedencias y marcas</h2>
+              <ul>{producto.variantes.map((v) => <li>{v}</li>)}</ul>
+              <p class="nota">Consulta por WhatsApp cuál hay disponible.</p>
+            </section>
+          )}
+
+          {producto.beneficios?.length > 0 && (
+            <section class="seccion-ficha">
+              <h2>Beneficios</h2>
+              <ul>{producto.beneficios.map((b) => <li>{b}</li>)}</ul>
+            </section>
+          )}
+
+          {tieneModo && (
+            <section class="seccion-ficha">
+              <h2>Modo de consumo</h2>
+              <dl>
+                {modo.porcion && (<><dt>Cantidad por porción</dt><dd>{modo.porcion}</dd></>)}
+                {modo.preparacion && (<><dt>Preparación</dt><dd>{modo.preparacion}</dd></>)}
+                {modo.frecuencia && (<><dt>Frecuencia</dt><dd>{modo.frecuencia}</dd></>)}
+              </dl>
+            </section>
+          )}
+
+          {(producto.beneficios?.length > 0 || tieneModo) && (
+            <p class="aviso-ficha">
+              Información orientativa del negocio. No reemplaza la indicación de un profesional de la salud.
+              Si estás embarazada, das de lactar, tomas medicamentos o tienes una condición de salud, consulta antes de consumirlo.
+            </p>
+          )}
+
+          {producto.usoPrevisto && (
+            <section class="seccion-ficha">
+              <h2>Uso previsto</h2>
+              <p>{producto.usoPrevisto}</p>
+            </section>
+          )}
+        </div>
+      </article>
+
+      {relacionados.length > 0 && (
+        <section class="relacionados" aria-labelledby="titulo-relacionados">
+          <div class="relacionados-cab">
+            <h2 id="titulo-relacionados">{linea ? `Más de ${linea.nombre.toLowerCase()}` : 'Otros productos'}</h2>
+            {linea && <a href={`/catalogo/?categoria=${linea.id}`}>Ver toda la línea</a>}
+          </div>
+          <ul class="rejilla">
+            {relacionados.map((p) => <TarjetaProducto producto={p} />)}
+          </ul>
+        </section>
+      )}
+    </div>
+  </div>
+</Layout>

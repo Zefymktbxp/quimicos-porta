@@ -1,0 +1,12 @@
+---
+// Icono de línea de productos (trazo con el color del texto). Se usa en las categorías sin foto.
+const { id } = Astro.props;
+---
+<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {id === 'limpieza' && (<><path d="M24 5C24 5 10 20 10 31a14 14 0 0 0 28 0C38 20 24 5 24 5Z"/><path d="M17 32a7 7 0 0 0 7 7"/></>)}
+  {id === 'cosmetica' && (<><rect x="10" y="9" width="28" height="8" rx="2"/><path d="M13 17h22v21a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4Z"/><path d="M19 27h10"/></>)}
+  {id === 'laboratorio' && (<><path d="M19 6h10M21 6v13L9 40a3 3 0 0 0 2.7 4.3h24.6A3 3 0 0 0 39 40L27 19V6"/><path d="M14 32h20"/></>)}
+  {id === 'quimicos' && (<><path d="M24 5l16 9v20l-16 9-16-9V14z"/><circle cx="24" cy="24" r="5"/></>)}
+  {id === 'alimentarios' && (<><path d="M6 22h36a18 18 0 0 1-36 0z"/><path d="M16 14c0-4 4-4 4-9M28 14c0-4 4-4 4-9"/></>)}
+  {id === 'naturales' && (<><path d="M8 40C8 20 20 8 40 8c0 20-12 32-32 32z"/><path d="M8 40 26 22"/></>)}
+</svg>

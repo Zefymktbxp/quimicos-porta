@@ -1,0 +1,141 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TarjetaProducto from '../components/TarjetaProducto.astro';
+import { catalogo } from '../lib/catalogo.js';
+import { categorias } from '../data/categorias.js';
+import IconoWhatsApp from '../components/IconoWhatsApp.astro';
+import { site } from '../config/site.js';
+import { enlaceWhatsApp } from '../lib/whatsapp.js';
+
+// Solo se ofrecen como filtro las categorías que ya tienen productos cargados.
+const filtros = categorias.filter((c) => catalogo.some((p) => p.categoria === c.id));
+const conFoto = catalogo.filter((p) => p.imagen);
+const sinFoto = catalogo.filter((p) => !p.imagen);
+const enlaceGeneral = enlaceWhatsApp('Hola, quisiera consultar por un producto que no encontré en el catálogo');
+---
+<Layout titulo="Catálogo" descripcion="Catálogo de insumos químicos, alimentarios y productos naturales de Químicos Porta Ingenieros." actual="catalogo">
+  <section class="banda">
+    <div class="contenedor">
+      <h1>Catálogo</h1>
+      <p>Busca por nombre y abre la ficha para consultar el precio por WhatsApp.</p>
+
+      <form class="barra-busqueda" id="form-busqueda" role="search">
+        <label for="buscar" style="position:absolute;left:-9999px">Buscar producto por nombre</label>
+        <input class="campo" id="buscar" type="search" placeholder="Buscar producto (ej. curcuma)" autocomplete="off" />
+        <button class="boton boton-borde" type="button" id="limpiar" hidden>Limpiar</button>
+      </form>
+    </div>
+    <div class="banda-regla" aria-hidden="true"></div>
+  </section>
+
+  <div class="pagina">
+    <div class="contenedor">
+      <div class="filtros" role="group" aria-label="Filtrar por categoría">
+        <button type="button" class="filtro" data-categoria="" aria-pressed="true">Todos</button>
+        {filtros.map((c) => (
+          <button type="button" class="filtro" data-categoria={c.id} aria-pressed="false">{c.nombre}</button>
+        ))}
+      </div>
+      <p class="estado-busqueda" id="estado" role="status" aria-live="polite">{catalogo.length} productos</p>
+
+      <div class="sin-resultados" id="sin-resultados" data-wa={site.whatsappNumero} hidden>
+        <p><strong>No encontramos productos con esa búsqueda.</strong></p>
+        <p>Revisa la escritura o prueba con otra palabra. Si no está en la lista, puede que igual lo tengamos: pregúntanos.</p>
+        <div class="acciones acciones-centro">
+          <a class="boton boton-whatsapp" id="preguntar" href={enlaceGeneral} target="_blank" rel="noopener"><IconoWhatsApp /> Preguntar por WhatsApp</a>
+          <button class="boton boton-borde" type="button" id="limpiar-vacio">Limpiar búsqueda</button>
+        </div>
+      </div>
+
+      <ul class="rejilla" id="rejilla">
+        {conFoto.map((p) => <TarjetaProducto producto={p} />)}
+      </ul>
+      <ul class="rejilla" id="rejilla-texto">
+        {sinFoto.map((p) => <TarjetaProducto producto={p} />)}
+      </ul>
+
+      <aside class="aviso-mas">
+        <div>
+          <h2>¿No ves lo que buscas?</h2>
+          <p>Esta lista no incluye todo lo que manejamos: también tenemos colorantes, esencias, fragancias, envases y aceites esenciales. Escríbenos y te decimos si lo tenemos, en qué presentación y a qué precio.</p>
+        </div>
+        <a class="boton boton-whatsapp" href={enlaceGeneral} target="_blank" rel="noopener"><IconoWhatsApp /> Consultar por WhatsApp</a>
+      </aside>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { normalizar } from '../lib/texto.js';
+
+  const entrada = document.getElementById('buscar') as HTMLInputElement;
+  const botonLimpiar = document.getElementById('limpiar') as HTMLButtonElement;
+  const botonVacio = document.getElementById('limpiar-vacio') as HTMLButtonElement;
+  const estado = document.getElementById('estado') as HTMLElement;
+  const vacio = document.getElementById('sin-resultados') as HTMLElement;
+  const rejillas = [document.getElementById('rejilla'), document.getElementById('rejilla-texto')] as HTMLElement[];
+  const preguntar = document.getElementById('preguntar') as HTMLAnchorElement;
+  const items = rejillas.flatMap((g) => Array.from(g.querySelectorAll('li'))) as HTMLLIElement[];
+
+  const botonesFiltro = Array.from(document.querySelectorAll('.filtro')) as HTMLButtonElement[];
+  const idsCategoria = botonesFiltro.map((b) => b.dataset.categoria ?? '').filter(Boolean);
+  let categoria = '';
+
+  function filtrar() {
+    const q = normalizar(entrada.value);
+    let visibles = 0;
+    for (const li of items) {
+      const coincide =
+        (!q || (li.dataset.busqueda ?? '').includes(q)) && (!categoria || li.dataset.categoria === categoria);
+      li.hidden = !coincide;
+      if (coincide) visibles++;
+    }
+    for (const b of botonesFiltro) b.setAttribute('aria-pressed', String((b.dataset.categoria ?? '') === categoria));
+    vacio.hidden = visibles !== 0;
+    if (visibles === 0) {
+      const buscado = entrada.value.trim();
+      const mensaje = buscado ? `Hola, quisiera consultar si tienen: ${buscado}` : 'Hola, quisiera consultar por un producto que no encontré en el catálogo';
+      preguntar.href = `https://wa.me/${vacio.dataset.wa}?text=${encodeURIComponent(mensaje)}`;
+    }
+    // Los productos con foto van arriba y los de solo texto abajo; una lista sin coincidencias se oculta.
+    for (const g of rejillas) g.hidden = !Array.from(g.children).some((li) => !(li as HTMLElement).hidden);
+    botonLimpiar.hidden = !q && !categoria;
+    estado.textContent = !q && !categoria
+      ? `${items.length} productos`
+      : visibles === 0
+        ? 'Sin resultados'
+        : `${visibles} ${visibles === 1 ? 'producto encontrado' : 'productos encontrados'}`;
+    const url = new URL(location.href);
+    if (entrada.value.trim()) url.searchParams.set('q', entrada.value.trim());
+    else url.searchParams.delete('q');
+    if (categoria) url.searchParams.set('categoria', categoria);
+    else url.searchParams.delete('categoria');
+    history.replaceState(null, '', url);
+  }
+
+  function limpiar() {
+    entrada.value = '';
+    categoria = '';
+    filtrar();
+    entrada.focus();
+  }
+
+  for (const b of botonesFiltro) {
+    b.addEventListener('click', () => {
+      categoria = b.dataset.categoria ?? '';
+      filtrar();
+    });
+  }
+
+  entrada.addEventListener('input', filtrar);
+  botonLimpiar.addEventListener('click', limpiar);
+  botonVacio.addEventListener('click', limpiar);
+  document.getElementById('form-busqueda')!.addEventListener('submit', (e) => e.preventDefault());
+
+  // Permite llegar con ?q=texto o ?categoria=id desde el Inicio.
+  const params = new URLSearchParams(location.search);
+  entrada.value = params.get('q') ?? '';
+  const pedida = params.get('categoria') ?? '';
+  categoria = idsCategoria.includes(pedida) ? pedida : '';
+  filtrar();
+</script>

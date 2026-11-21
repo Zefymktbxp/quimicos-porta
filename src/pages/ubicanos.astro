@@ -1,0 +1,126 @@
+---
+import '../styles/ubicanos.css';
+import Layout from '../layouts/Layout.astro';
+import IconoWhatsApp from '../components/IconoWhatsApp.astro';
+import { site } from '../config/site.js';
+import { enlaceWhatsApp } from '../lib/whatsapp.js';
+
+const enlaceWa = enlaceWhatsApp('Hola, quisiera consultar presentaciones, cantidades y disponibilidad');
+const indicaciones = site.indicaciones ?? [];
+---
+<Layout titulo="Ubícanos" descripcion={`Dirección, mapa y cómo llegar a ${site.nombre} en Huancayo.`} actual="ubicanos">
+  <header class="u-cabecera">
+    <div class="contenedor">
+      <nav class="u-migas" aria-label="Ruta"><a href="/">Inicio</a> / <span aria-current="page">Ubícanos</span></nav>
+      <h1>Ubícanos</h1>
+      <p>Estamos en el {site.direccion.split(',')[0]}, en Huancayo. Aquí tienes cómo llegar.</p>
+    </div>
+    <div class="u-regla" aria-hidden="true"></div>
+  </header>
+
+  <div class="u-cuerpo">
+    <div class="contenedor u-grid">
+      <section class="u-info" aria-labelledby="titulo-info">
+        <h2 id="titulo-info">Información de contacto</h2>
+        <ul class="u-datos">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <div><strong>Dirección</strong><span>{site.direccion}</span></div>
+          </li>
+          <li>
+            <IconoWhatsApp />
+            <div><strong>WhatsApp</strong><a href={enlaceWa} target="_blank" rel="noopener">{site.whatsappVisible}</a></div>
+          </li>
+          {site.horario && (
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <div><strong>Horario de atención</strong><span>{site.horario}</span></div>
+            </li>
+          )}
+        </ul>
+
+        <div class="acciones">
+          <a class="boton boton-turquesa boton-principal" href={site.mapaUrl} target="_blank" rel="noopener">Cómo llegar</a>
+        </div>
+
+        {indicaciones.length > 0 && (
+          <div class="u-indicaciones">
+            <h3>Indicaciones</h3>
+            <ul>
+              {indicaciones.map((i) => (<li><strong>{i.medio}:</strong> {i.texto}</li>))}
+            </ul>
+          </div>
+        )}
+      </section>
+
+      <figure class="u-calle">
+        <div class="mapa-caja calle-caja" data-click>
+          <div class="calle-portada">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <p class="calle-titulo">Mira la entrada antes de venir</p>
+            <p class="calle-dir">{site.direccion}</p>
+            <button type="button" class="boton boton-turquesa" data-cargar>Ver vista de calle</button>
+            <p class="calle-estado" role="status" hidden>Cargando vista de calle…</p>
+            <a class="calle-alterno" href={site.mapaUrl} target="_blank" rel="noopener">Abrir en Google Maps</a>
+          </div>
+          <iframe title={`Vista de calle frente a ${site.nombre}`} data-src={site.calleEmbedUrl} allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+        <figcaption>Así se ve la calle frente al local (Google Street View).</figcaption>
+      </figure>
+    </div>
+
+    <section class="contenedor u-mapa" aria-labelledby="titulo-mapa">
+      <h2 id="titulo-mapa">Mapa</h2>
+      <div class="mapa-caja mapa-grande" data-lazy>
+        <div class="mapa-respaldo">
+          <p><strong>Mapa de Google Maps</strong></p>
+          <p>{site.direccion}</p>
+          <a href={site.mapaUrl} target="_blank" rel="noopener">Abrir en Google Maps</a>
+        </div>
+        <iframe title={`Mapa: ubicación de ${site.nombre}`} data-src={site.mapaEmbedUrl} allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  // Cada mapa se carga solo al acercarse a él, para no frenar la página.
+  const cajas = Array.from(document.querySelectorAll<HTMLElement>('[data-lazy]'));
+
+  // La vista de calle (Street View) tarda y se ve negra mientras carga: solo se pide con un clic
+  // y la portada se mantiene un momento más, hasta que aparezca la imagen.
+  for (const caja of document.querySelectorAll<HTMLElement>('[data-click]')) {
+    const marco = caja.querySelector<HTMLIFrameElement>('iframe');
+    const boton = caja.querySelector<HTMLButtonElement>('[data-cargar]');
+    const estado = caja.querySelector<HTMLElement>('.calle-estado');
+    if (!marco || !boton) continue;
+    boton.addEventListener('click', () => {
+      boton.hidden = true;
+      if (estado) estado.hidden = false;
+      marco.addEventListener('load', () => setTimeout(() => caja.classList.add('listo'), 3500));
+      marco.src = marco.dataset.src ?? '';
+    });
+  }
+  const cargar = (caja: HTMLElement) => {
+    const marco = caja.querySelector<HTMLIFrameElement>('iframe');
+    if (!marco || marco.src) return;
+    marco.addEventListener('load', () => caja.classList.add('listo'));
+    marco.src = marco.dataset.src ?? '';
+  };
+  if ('IntersectionObserver' in window) {
+    const vigilante = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          if (e.isIntersecting) {
+            cargar(e.target as HTMLElement);
+            vigilante.unobserve(e.target);
+          }
+        }
+      },
+      { rootMargin: '400px 0px' },
+    );
+    cajas.forEach((c) => vigilante.observe(c));
+  } else {
+    cajas.forEach(cargar);
+  }
+</script>

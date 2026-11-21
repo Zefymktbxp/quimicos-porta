@@ -1,0 +1,282 @@
+:root {
+  --fondo: #d9eef4;
+  --blanco: #ffffff;
+  --azul: #0b2a5b;
+  --azul-suave: #3a4f78;
+  --turquesa: #00a9c9;
+  --verde: #8dc63f;
+  --verde-osc: #4c7a12;
+  --gris-lab: #eaf2f6;
+  --turquesa-osc: #00758c;
+  --borde: #d3e6ec;
+  --radio: 14px;
+  --sombra: 0 2px 10px rgba(11, 42, 91, 0.08);
+  --ancho: 1240px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--fondo);
+  color: var(--azul);
+  font-family: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-stretch: 100%;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+main { flex: 1; }
+
+[hidden] { display: none !important; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--turquesa-osc); }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 0.5em; }
+h1, h2 { font-stretch: 100%; font-weight: 800; letter-spacing: -0.01em; }
+h1 { font-size: clamp(1.75rem, 5.5vw, 2.8rem); }
+h2 { font-size: clamp(1.35rem, 3.5vw, 1.8rem); }
+p { margin: 0 0 1em; }
+
+:focus-visible { outline: 3px solid var(--turquesa); outline-offset: 2px; }
+
+.contenedor { width: 100%; max-width: var(--ancho); margin: 0 auto; padding: 0 1rem; }
+
+/* Botones */
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 48px; padding: 0.7rem 1.4rem;
+  border: 2px solid transparent; border-radius: 12px; font-stretch: 100%;
+  font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.boton-primario { background: var(--azul); color: #fff; }
+.boton-primario:hover { background: #12397a; }
+.boton-whatsapp { background: var(--turquesa-osc); color: #fff; }
+.boton-whatsapp:hover { background: #005f72; }
+.boton-borde { background: transparent; color: var(--azul); border-color: var(--azul); }
+.boton-borde:hover { background: var(--azul); color: #fff; }
+.boton svg { width: 1.3em; height: 1.3em; flex: none; }
+
+/* Cabecera */
+
+.cabecera {
+  position: relative; z-index: 20;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--borde);
+}
+.cabecera .contenedor {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  gap: 0.15rem 1rem; padding-top: 0.6rem; padding-bottom: 0.4rem;
+}
+.logo-enlace { display: block; line-height: 0; justify-self: start; }
+.logo-enlace img { height: 46px; width: auto; }
+.menu { grid-column: 1 / -1; display: flex; gap: 0.25rem; margin: 0 -0.5rem; }
+.menu a {
+  flex: 1; text-align: center; padding: 0.55rem 0.5rem; border-radius: 8px;
+  color: var(--azul); font-weight: 600; font-size: 0.98rem; text-decoration: none;
+  border-bottom: 3px solid transparent; border-radius: 0;
+}
+.menu a:hover { color: var(--turquesa-osc); }
+.menu a[aria-current='page'] { color: var(--turquesa-osc); border-bottom-color: var(--turquesa); }
+.cabecera-wa {
+  grid-column: 2; grid-row: 1;
+  min-height: 42px; padding: 0.45rem 1rem; font-size: 0.95rem;
+}
+
+/* Campo de texto */
+.campo {
+  width: 100%; min-height: 48px; padding: 0.6rem 1rem;
+  border: 2px solid #b9cfdb; border-radius: 12px;
+  background: #fff; color: var(--azul); font: inherit;
+}
+.campo:focus { border-color: var(--turquesa); outline: none; box-shadow: 0 0 0 3px rgba(0, 167, 199, 0.25); }
+
+/* Catálogo */
+.pagina { padding: 1.5rem 0 2.5rem; }
+
+/* Banda de título: azul marino con brillo turquesa, igual que la portada */
+.banda {
+  position: relative; padding: 2rem 0 2.75rem; color: #fff;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(0, 169, 201, 0.4), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(141, 198, 63, 0.22), transparent 40%),
+    linear-gradient(160deg, #0a2a5e 0%, #061c42 100%);
+}
+.banda h1 { color: #fff; margin-bottom: 0.4rem; }
+.banda p { color: #d3e4f7; max-width: 36rem; margin: 0; }
+.banda .barra-busqueda { margin: 1.1rem 0 0; }
+.banda .campo { border-color: transparent; }
+.banda .boton-borde { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+.banda .boton-borde:hover { background: #fff; color: var(--azul); }
+.banda-regla { position: absolute; left: 0; right: 0; bottom: 0; height: 12px; background: var(--turquesa); }
+.banda-regla::before { content: ''; position: absolute; inset: 0 0 auto; height: 6px; background: repeating-linear-gradient(90deg, #0a2a5e 0 2px, transparent 2px 14px); }
+.barra-busqueda { display: flex; gap: 0.5rem; margin: 1rem 0 0.5rem; max-width: 560px; }
+.estado-busqueda { min-height: 1.6em; color: var(--azul-suave); margin: 0 0 1rem; }
+
+.rejilla { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; grid-template-columns: repeat(2, 1fr); }
+.rejilla > li[hidden] { display: none; }
+.tarjeta {
+  display: flex; flex-direction: column; height: 100%;
+  background: var(--blanco); border: 1px solid var(--borde); border-radius: var(--radio);
+  box-shadow: var(--sombra); overflow: hidden; text-decoration: none; color: var(--azul);
+}
+.tarjeta:hover { border-color: var(--turquesa); box-shadow: 0 4px 16px rgba(0, 117, 140, 0.18); }
+.tarjeta img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: #fbf6f1; }
+.tarjeta .cuerpo { padding: 0.8rem 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.3rem; flex: 1; }
+.tarjeta h3 { font-size: 1.02rem; margin: 0; }
+.tarjeta .tag-cat { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--azul-suave); }
+.tarjeta .presentacion { font-size: 0.92rem; color: var(--turquesa-osc); font-weight: 600; }
+.tarjeta .ver { margin-top: auto; padding-top: 0.4rem; font-size: 0.9rem; font-weight: 700; color: var(--azul-suave); }
+/* Tarjeta de solo texto: sin espacio de imagen. */
+.tarjeta-texto { border-left: 5px solid var(--turquesa); }
+.tarjeta-texto .cuerpo { padding: 1.1rem 1rem; }
+
+.sin-resultados {
+  text-align: center; padding: 2rem 1rem; background: #fff;
+  border: 2px dashed var(--borde); border-radius: var(--radio);
+}
+.sin-resultados[hidden] { display: none; }
+
+/* Ficha */
+.migas { font-size: 0.95rem; margin-bottom: 1rem; }
+.ficha { display: grid; gap: 1.5rem; align-items: start; }
+.ficha-foto { background: #fbf6f1; border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; }
+.ficha-foto img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
+.dato { display: inline-block; margin: 0.25rem 0 1rem; padding: 0.4rem 0.9rem; background: #e3f4f8; border-radius: 10px; font-weight: 700; }
+.dato small { font-weight: 600; color: var(--azul-suave); margin-right: 0.4rem; }
+.seccion-ficha { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--borde); }
+.seccion-ficha h2 { font-size: 1.25rem; }
+.seccion-ficha ul { padding-left: 1.2rem; margin: 0; }
+.seccion-ficha dl { margin: 0; display: grid; gap: 0.5rem; }
+.seccion-ficha dt { font-weight: 700; }
+.seccion-ficha dd { margin: 0 0 0.3rem; }
+.nota { font-size: 0.92rem; color: var(--azul-suave); margin-top: 1rem; }
+
+/* Pie */
+
+@media (min-width: 640px) {
+  .rejilla { grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+  .logo-enlace img { height: 52px; }
+}
+@media (min-width: 900px) {
+  .cabecera .contenedor { grid-template-columns: auto 1fr auto; padding-top: 0.5rem; padding-bottom: 0.5rem; gap: 1.5rem; }
+  .cabecera { position: sticky; top: 0; }
+  .cabecera-wa { grid-column: auto; grid-row: auto; }
+  .menu { grid-column: auto; margin: 0; justify-content: flex-end; }
+  .menu a { flex: none; padding: 0.9rem 1rem; }
+  .rejilla { grid-template-columns: repeat(4, 1fr); }
+  .ficha { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+}
+
+/* Filtros del catálogo */
+.filtros { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.25rem 0 0.75rem; }
+.filtro {
+  min-height: 40px; padding: 0.4rem 1rem; border: 2px solid var(--borde); border-radius: 10px;
+  background: #fff; color: var(--azul); font: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+}
+.filtro:hover { border-color: var(--turquesa); }
+.filtro[aria-pressed='true'] { background: var(--azul); border-color: var(--azul); color: #fff; }
+
+/* Compartidos */
+.acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+
+/* Consulta por WhatsApp en la ficha */
+.consulta { margin: 0.25rem 0 0; }
+.boton-grande { width: 100%; min-height: 54px; font-size: 1.1rem; }
+.consulta-mensaje { margin: 0.6rem 0 0; font-size: 0.9rem; color: var(--azul-suave); }
+@media (max-width: 639px) {
+  /* En móvil el botón queda fijo al borde inferior mientras se lee la ficha. */
+  .consulta {
+    position: sticky; bottom: 0; z-index: 10; margin: 0 -1rem; padding: 0.7rem 1rem;
+    background: rgba(255, 255, 255, 0.96); border-top: 1px solid var(--borde); box-shadow: 0 -6px 16px rgba(11, 42, 91, 0.1);
+  }
+  .consulta-mensaje { display: none; }
+}
+@media (min-width: 640px) {
+  .boton-grande { width: auto; min-width: 280px; }
+}
+
+/* Catálogo: aviso final y acciones centradas en el estado vacío */
+.acciones-centro { justify-content: center; }
+.aviso-mas {
+  display: grid; gap: 1rem; align-items: center; margin-top: 2rem; padding: 1.5rem;
+  background: var(--azul); color: #fff; border-radius: 28px 6px 28px 6px;
+}
+.aviso-mas h2 { color: #fff; font-size: 1.4rem; margin-bottom: 0.3rem; }
+.aviso-mas p { margin: 0; color: #cfe0f5; max-width: 36rem; }
+.aviso-mas .boton-whatsapp { background: var(--turquesa); color: #04223f; justify-self: start; }
+@media (min-width: 760px) { .aviso-mas { grid-template-columns: 1fr auto; padding: 1.75rem 2rem; } }
+
+/* Pie compacto */
+.pie { background: #061c42; border-top: 4px solid var(--verde); color: #cfe0f5; padding: 1.1rem 0 4.75rem; font-size: 0.92rem; }
+.pie-fila { width: 100%; max-width: var(--ancho); margin: 0 auto; padding: 0 1rem; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.35rem 1.5rem; }
+.pie strong { color: #fff; }
+.pie a { color: #fff; }
+
+/* Botón flotante de WhatsApp */
+.wa-flotante {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 30; display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 56px; padding: 0 1rem; background: var(--turquesa-osc); color: #fff; border-radius: 16px 6px 16px 6px;
+  font-weight: 700; font-stretch: 100%; text-decoration: none; box-shadow: 0 8px 22px rgba(5, 22, 52, 0.35);
+  transition: translate 0.15s ease, background 0.15s;
+}
+.wa-flotante:hover { background: #005f72; translate: 0 -3px; }
+.wa-flotante svg { width: 1.7rem; height: 1.7rem; flex: none; }
+.wa-flotante span { display: none; }
+@media (min-width: 640px) { .wa-flotante span { display: inline; } .wa-flotante { right: 1.5rem; bottom: 1.5rem; } }
+
+/* En móvil, el botón flotante hace de acceso a WhatsApp: se quita el del encabezado. */
+@media (max-width: 639px) { .cabecera-wa { display: none; } }
+
+/* Variantes de botón compartidas */
+.boton-turquesa { background: var(--turquesa); color: #04223f; }
+.boton-turquesa:hover { background: #33bfd8; }
+.boton-blanco { background: #fff; color: var(--azul); }
+.boton-blanco:hover { background: #e3f4f8; }
+.boton-azul { background: var(--azul); color: #fff; }
+.boton-azul:hover { background: #12397a; }
+/* «Cómo llegar»: acción principal de la ubicación */
+.boton-principal { min-height: 56px; padding: 1rem 2.25rem; font-size: 1.15rem; }
+
+/* Aviso de precaución en las fichas con modo de consumo */
+.aviso-ficha {
+  margin-top: 1.25rem; padding: 0.9rem 1.1rem; background: #e3f4f8; border-left: 5px solid var(--turquesa);
+  border-radius: 10px; font-size: 0.93rem; color: var(--azul-suave);
+}
+/* Modo de consumo: etiquetas y valores más legibles */
+.seccion-ficha dt { color: var(--azul-suave); font-size: 0.92rem; font-weight: 600; }
+.seccion-ficha dd { font-weight: 600; margin-bottom: 0.6rem; }
+
+/* Ficha: columna lateral con la foto y los datos rápidos; relacionados al final */
+.ficha-lado { display: grid; gap: 1rem; align-content: start; }
+.ficha-datos { margin: 0; padding: 0.4rem 1.1rem; background: #fff; border: 1px solid var(--borde); border-radius: var(--radio); }
+.ficha-datos > div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--borde); }
+.ficha-datos > div:last-child { border-bottom: 0; }
+.ficha-datos dt { color: var(--azul-suave); font-size: 0.92rem; font-weight: 600; flex: none; }
+.ficha-datos dd { margin: 0; font-weight: 700; text-align: right; }
+.relacionados { margin-top: 3rem; padding-top: 1.75rem; border-top: 3px solid var(--azul); }
+.relacionados-cab { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 1.1rem; }
+.relacionados-cab h2 { font-size: clamp(1.4rem, 4vw, 1.9rem); margin: 0; }
+.relacionados-cab a { font-weight: 700; }
+@media (min-width: 900px) {
+  /* La foto y los datos acompañan al visitante mientras baja por la ficha */
+  .ficha-lado { position: sticky; top: 5.5rem; }
+}
+
+/* Móvil: la foto va primero, luego el contenido y al final la tarjeta de datos */
+@media (max-width: 899px) {
+  .ficha-lado { display: contents; }
+  .ficha-foto { order: 1; }
+  .ficha > div:not(.ficha-lado) { order: 2; }
+  .ficha-datos { order: 3; }
+}
+
+/* Las tarjetas sin foto miden solo lo que ocupa su texto (no se estiran a la altura de las que sí tienen foto) */
+.rejilla > li:has(> .tarjeta-texto) { align-self: start; }
+.tarjeta-texto { height: auto; }
+.rejilla:not([hidden]) + .rejilla { margin-top: 1.25rem; }
+
+/* Varias presentaciones en una línea: letra algo menor en pantallas angostas */
+@media (max-width: 699px) { .tarjeta .presentacion { font-size: 0.7rem; letter-spacing: -0.02em; } }

@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import { normalizar } from '../lib/texto.js';
+import { categorias } from '../data/categorias.js';
+
+// mostrarCategoria: añade la etiqueta de categoría (se usa en la selección del Inicio).
+const { producto, mostrarCategoria = false } = Astro.props;
+const alt = producto.nombre;
+const nombreCategoria = categorias.find((c) => c.id === producto.categoria)?.nombre;
+---
+<li data-busqueda={normalizar(producto.nombre)} data-categoria={producto.categoria}>
+  <a class:list={['tarjeta', { 'tarjeta-texto': !producto.imagen }]} href={`/producto/${producto.slug}/`}>
+    {producto.imagen && <Image src={producto.imagen} alt={alt} width={400} height={400} loading="lazy" />}
+    <div class="cuerpo">
+      {mostrarCategoria && nombreCategoria && <span class="tag-cat">{nombreCategoria}</span>}
+      <h3>{producto.nombre}</h3>
+      {producto.presentaciones?.length > 0 && <span class="presentacion">{producto.presentaciones.join(' · ')}</span>}
+      <span class="ver">Ver ficha →</span>
+    </div>
+  </a>
+</li>

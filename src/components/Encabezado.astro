@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import IconoWhatsApp from './IconoWhatsApp.astro';
+import { site } from '../config/site.js';
+import { enlaceWhatsApp } from '../lib/whatsapp.js';
+
+const { actual = '' } = Astro.props;
+const enlaces = [
+  { href: '/', texto: 'Inicio', id: 'inicio' },
+  { href: '/catalogo/', texto: 'Catálogo', id: 'catalogo' },
+  // Página con dirección, mapa, vista de calle y cómo llegar.
+  { href: '/ubicanos/', texto: 'Ubícanos', id: 'ubicanos' },
+];
+---
+<header class="cabecera">
+  <div class="contenedor">
+    <a class="logo-enlace" href="/" aria-label={`${site.nombre}, ir al inicio`}>
+      <Image src={logo} alt={site.nombre} width={286} height={96} loading="eager" />
+    </a>
+    <nav class="menu" aria-label="Principal">
+      {enlaces.map((e) => (
+        <a href={e.href} aria-current={actual === e.id ? 'page' : undefined}>{e.texto}</a>
+      ))}
+    </nav>
+    <a class="boton boton-whatsapp cabecera-wa" href={enlaceWhatsApp('Hola, quisiera hacer una consulta')} target="_blank" rel="noopener">
+      <IconoWhatsApp /> WhatsApp
+    </a>
+  </div>
+</header>
