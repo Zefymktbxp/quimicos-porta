@@ -35,8 +35,8 @@ site.mapaEmbedUrl =
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7366.237854743635!2d-75.20610240815364!3d-12.07335517354611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x910e9715c3112731%3A0x5d982bbc23c1125!2sEmpresa%20Qu%C3%ADmicos%20Porta%20Ingenieros%20EIRL!5e0!3m2!1ses!2spe!4v1795241570347!5m2!1ses!2spe';
 
 // Datos opcionales de la página «Ubícanos». Mientras estén vacíos, no se muestran.
-// - horario: por ejemplo 'Lunes a sábado, 9 a. m. a 6 p. m.' (PENDIENTE: confirmar con el negocio).
+// - horario: texto de atención al público (confirmado).
 // - indicaciones: lista de { medio, texto }, por ejemplo
 //   { medio: 'A pie', texto: 'A dos cuadras de la plaza ...' }. Solo con datos verificados.
-site.horario = 'De 8 a. m. a 8 p. m.'; // Confirmado por el dueño. Faltan los días de atención (no se inventan).
+site.horario = 'Lunes a sábado, de 8 a. m. a 8 p. m.'; // Confirmado por el negocio.
 site.indicaciones = [];

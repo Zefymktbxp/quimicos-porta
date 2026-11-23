@@ -11,7 +11,7 @@
 //   articulo      'el' | 'la' | 'los' | 'las' (para el mensaje de WhatsApp: «del colágeno», «de la vitamina C»).
 //   presentacion  SOLO si está confirmada (por ejemplo en la etiqueta). Si no, null.
 //   descripcion   texto breve basado en datos confirmados (opcional).
-//   variantes     lista de procedencias o marcas que maneja el negocio (opcional; del flyer, confirmar).
+//   variantes     lista de lugares de procedencia (opcional). NO poner marcas ni proveedores: la competencia los vería.
 //   beneficios    lista de textos, SOLO con respaldo verificable (opcional).
 //   modoConsumo   { porcion, preparacion, frecuencia }, SOLO verificado en etiqueta/ficha oficial (opcional).
 //   usoPrevisto   texto, solo si está confirmado (opcional).
@@ -32,7 +32,7 @@ export const products = [
     articulo: 'el',
     presentacion: '1 kg',
     descripcion: 'Colágeno hidrolizado en polvo, en bolsa transparente.',
-    variantes: ['Brasilero, marca Gelco', 'Italiano, marca Quimlapi', 'Ital Gelatine', 'Peptinex, marca Gelnex'],
+    variantes: ['Brasil', 'Italia'],
     beneficios: ['Fortalece la piel, el cutis, las uñas y el cabello'],
     modoConsumo: {
       porcion: '1 cucharada sopera colmada (10 g)',
